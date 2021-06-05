@@ -1,0 +1,181 @@
+# [https://www.zufallsheld.de/2013/09/29/python-backup-script-with-rsync/]
+
+
+""" zufallsheld - a tech blog
+
+Python Backup Script with rsync
+Posted on So 29 September 2013
+
+\\DIVISIONST\docs\code\BackupWithRSYNC.py
+
+UPDATE: I rewrote the whole script. You can find it here!
+
+I wanted to get into Python recently and to have a reason to actually learn the language, I thought to myself, why not replace the bash-scripts I use on my private computer. I started with my backup script, that saves my home-folder to my external usb-drive.
+
+
+
+With this article I’ll describe what I did and why. I’ll have some thoughts in my mind on what the script should do. You’ll see these below. Afterwards I’ll show how I accomplished these things.
+Preliminary considerations
+
+    It should check if the directories actually exist.
+    It should ask for confirmation before doing anything
+    I needed the script to backup the specified folder to the specified location.
+    It should delete unnecessary files before backing up
+    Considering I used rsync in my bash-script I wanted the same functionality again
+
+Writing the script
+Check if directory exists
+
+Python actually already has a function that checks if a directory exists: os.path.exists
+
+So all I had to do was to use the built-in function and put it in my own little function, that performs the checks and prints an error-message and exits, if the directory does not exist.
+
+def check_dir_exist(os_dir):
+if not os.path.exists(os_dir):
+print os_dir, "does not exist."
+exit(1)
+
+Confirm on actions
+
+I wanted to let the user confirm any actions he does before they are executed, so he or she can back out if there was a mistake.
+
+For that I built a function that asks for confirmation and if the answer is “yes”, the variable “exit_condition” should be 0, otherwise it is 1. So when the function is executed, depending on what status the variable took, I can decide on how to continue in the script.
+
+def confirm():  
+    gogo = raw_input("Continue? yes/no\n")  
+    global exit_condition  
+    if gogo == 'yes':  
+        exit_condition = 0  
+        return exit_condition  
+    elif gogo == "no":  
+        exit_condition = 1  
+        return exit_condition  
+    else:  
+    print "Please answer with yes or no."  
+confirm()
+
+Defining backup paths
+
+This one’s simple. The script just asks for user input on the paths for what to backup and where to put it. Afterwards there’s the existence-check.
+
+# Specify what and where to backup.  
+backup_path = raw_input("What should be backed up today?\n")
+check_dir_exist(backup_path)
+print "Okay", backup_path, "will be saved."  
+time.sleep(3)  
+backup_to_path = raw_input("Where to backup?\n")  
+check_dir_exist(backup_to_path)
+
+Delete files
+
+I wanted to delete unecessary files like temporary or backup files before doing the backup. For this I created to functions. The first functions takes an argument (in this case: file endings) as input and searches in the backup path for files ending with the argument. It then deletes these files.
+
+def delete_files(ending):
+    os.chdir(backup_path)
+    for r, d, f in os.walk(backup_path):
+        for files in f:
+            if files.endswith("." + ending):
+                os.remove(os.path.join(r, files))
+
+I use this function in a for-loop that iterates trough three file endings, each time asking the user if he/she wants to delete the files.
+
+# Delete files first
+print "First, let's cleanup unnecessary files in the backup path."
+file_types = ["tmp", "bak", "dmp"]
+for file_type in file_types:
+    print "Delete", file_type, "files?"
+    confirm()
+    if exit_condition == 0:
+        delete_files(file_type)
+
+At last, the trash can of the user executing the script gets deleted. I uses shutil.rmtree for this. It deletes the whole file-directory. Don’t worry: it’s recreated when a file is moved to the trash. os.path.expanduser just expands the “~” to the user’s home directory.
+
+# Empty trash can
+print "Empty trash can?"
+confirm()
+if exit_condition == 0:
+    print "Emptying!"
+    shutil.rmtree(os.path.expanduser("~/.local/share/Trash/files"))
+
+Backing up the files
+
+This is the important part of the script. I tried to find an rsync alternative in Python, I searched for a method to mimic the rsync behaviour but I didn’t find anything that was easy to understand, capable of what it should do and not outdated. That is, until I found Rsyncbackup a Python script “to perform automatic backups using the rsync command”. It does exactly what it says it does, so I went on and used it in my script.
+
+So I used rsync itself in combination with sh. Sh let’s me execute any program as if it were python native.
+
+rsync("-auhv", "--delete", "--exclude=lost+found", "--exclude=/sys", "--exclude=/tmp", "--exclude=/proc",
+  "--exclude=/mnt", "--exclude=/dev", "--exclude=/backup", backup_path, backup_to_path)
+
+The result
+
+Here’s the whole script put together:
+"""
+#!/usr/bin/env python
+
+import os
+import shutil
+import time
+
+from sh import rsync
+
+# Functions
+
+def check_dir_exist(os_dir):
+    if not os.path.exists(os_dir):
+        print os_dir, "does not exist."
+        exit(1)
+
+def confirm():
+    gogo = raw_input("Continue? yes/no\n")
+    global exit_condition
+    if gogo == 'yes':
+        exit_condition = 0
+        return exit_condition
+    elif gogo == "no":
+        exit_condition = 1
+        return exit_condition
+    else:
+        print "Please answer with yes or no."
+        confirm()
+
+def delete_files(ending):
+    for r, d, f in os.walk(backup_path):
+        for files in f:
+            if files.endswith("." + ending):
+                os.remove(os.path.join(r, files))
+
+# Specify what and where to backup.
+backup_path = raw_input("What should be backed up today?\n")
+check_dir_exist(backup_path)
+print "Okay", backup_path, "will be saved."
+time.sleep(3)
+
+backup_to_path = raw_input("Where to backup?\n")
+check_dir_exist(backup_to_path)
+
+# Delete files first
+print "First, let's cleanup unnecessary files in the backup path."
+file_types = ["tmp", "bak", "dmp"]
+for file_type in file_types:
+    print "Delete", file_type, "files?"
+    confirm()
+    if exit_condition == 0:
+        delete_files(file_type)
+
+# Empty trash can
+print "Empty trash can?"
+confirm()
+if exit_condition == 0:
+    print "Emptying!"
+    shutil.rmtree(os.path.expanduser("~/.local/share/Trash/files"))
+
+# Do the actual backup
+print "Doing the backup now!"
+confirm()
+if exit_condition == 1:
+        print "Aborting!"
+        exit(1)
+
+rsync("-auhv", "--delete", "--exclude=lost+found", "--exclude=/sys", "--exclude=/tmp", "--exclude=/proc",
+  "--exclude=/mnt", "--exclude=/dev", "--exclude=/backup", backup_path, backup_to_path)
+
