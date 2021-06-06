@@ -1,7 +1,9 @@
-# github reddit-searcher/reddit-searcher-lite.py
-# 31e4b99 on Apr 21, 2016
-# @zhiwenhuang zhiwenhuang reddit searcher with no oauth. Just for searching /u/zhiwenh
-# 75 lines (63 sloc) 2.99 KB
+#--------------------------------------------------
+# Desc:    reddit searcher with no oauth. Just for searching /u/LastOfTheIcarii
+# Author:  D. C. Sherman
+# Version: Python 2.7
+#--------------------------------------------------
+
 import requests
 import json
 import sys

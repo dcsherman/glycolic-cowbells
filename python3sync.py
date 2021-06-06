@@ -1,10 +1,16 @@
-""" Since rsync lacks compression and I'm not a big fan of rdiff, I thought I'd try my own little backup script. Since I'm very inexperienced with file management in Python, I'm sure there is lot of room for improvement.
+""" 
 
-The script creates the entire folder structure within the backup folder and then creates syncs recursively for all files within the source folders. Every file above a certain threshold gets gziped on the way.
+Since rsync lacks compression and I'm not a big fan of rdiff, I thought 
+I'd try another turn on the backup script. 
+
+This script recreates the entire folder structure within the backup folder and then 
+syncs recursively through all files within the source folders. Every file 
+above a certain threshold gets GZIP'ed on the way.
 
 A possible command would be:
 
     python3 sync.py -target MY_BACKUPFOLDER -source IMPORTANT_1 IMPORTANT_2
+
 """
 
 import argparse
@@ -31,7 +37,9 @@ def parse_input():
 
 
 def size_if_newer(source, target):
-    """ If newer it returns size, otherwise it returns False """
+    """ 
+	Returns file size if newer, otherwise it returns False 
+	"""
 
     src_stat = os.stat(source)
     try:
@@ -55,7 +63,9 @@ def sync_file(source, target, compress):
 
 
 def transfer_file(source, target, compress):
-    """ Either copy or compress and copies the file """
+    """ 
+	Either copy or compress and copies the file 
+	"""
 
     try:
         if compress:

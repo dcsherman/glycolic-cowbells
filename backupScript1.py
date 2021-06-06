@@ -1,13 +1,25 @@
-""" This python script backup your directory structure that works on Linux and Windows both. It directly uses the shell to do this task and shell commands are considered very fast compared to file operations does otherwise.
+#--------------------------------------------------
+# Desc:    Script to copy files and subfolders, compress them  to a separate ZIP file
+# Author:  D. C. Sherman
+#--------------------------------------------------
+
+""" 
+	Python Back-Up Script
+	
+	This script preserves directory structure on both Linux and 
+    Windows platforms. It uses the shell commands directly in each case, 
+    increasing speed compared to normal file operations.
+	
 """
 
 import os, os.path
 import subprocess
 import time
 def backUpDir(path):
-    """
-    Creates backup of the passed old dir and creates a new dir. The backed up dir gets the
-    date and time as the name of the new backed up file.
+
+ """
+    Creates backup of the passed old dir and creates a new dir. The backed up dir gets the date and time as the name of the new backed up file.
+	
     On success, returns a list consising of two values:
         0: to signify the success
         None: means no error occurred.
@@ -15,7 +27,7 @@ def backUpDir(path):
     On error, return a list consisting of two values:
         -1 : to signify the failure
         error string: the exact error string
-    """
+"""
 
     if os.path.exists(path) == True:
         #dir exists then backup old dir and create new

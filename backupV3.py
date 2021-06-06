@@ -4,9 +4,8 @@
 import os
 import time
 
-source='/home/grace/python/'
-
-target_dir='/home/grace/test/'
+source='/home/csherman/python/'
+target_dir='/home/archive/docs/'
 
 today=target_dir+time.strftime('%Y%m%d')
 
@@ -22,11 +21,11 @@ else:
 
 if not os.path.exists(today):
     os.mkdir(today)
-    print 'Sucessfully create directory',today
+    print 'Successfully create directory',today
 
 zip_command="zip -qr '%s' %s" %(target,''.join(source))
 
 if os.system(zip_command)==0:
-    print 'Sucessfully backup to',target
+    print 'Successful backup to',target
 else:
     print 'Backup Failed!'

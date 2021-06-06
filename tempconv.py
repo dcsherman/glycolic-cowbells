@@ -1,4 +1,4 @@
-# Wikibooks (2013), p.44. converts temperature to fahrenheit or celsius
+# converts temperature to fahrenheit or celsius
 
 def print_options():
     print "Options:"

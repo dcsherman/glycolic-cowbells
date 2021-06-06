@@ -1,7 +1,7 @@
 #--------------------------------------------------
 # Desc:    Script to copy files, compress them  to a separate ZIP file
 # Author:  D. C. Sherman
-# Version: Written in Python 2.7
+# Version: Python 2.7
 #--------------------------------------------------
 
 import os
