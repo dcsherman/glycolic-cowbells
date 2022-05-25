@@ -42,10 +42,7 @@ if __name__ =='__main__':
     print ('Ending execution')
 	
 """ 
-	Code ZIP's up the folder containing the target files. Rewrite so only the 
-    files are archived, without the folder structure. And make sure subfolders, 
-    if any, are excluded. 
-
+	Code ZIP's up the folder containing the target files. Rewrite so only the files are archived, without the folder structure. And make sure subfolders, if any, are excluded. 
 """
 
 

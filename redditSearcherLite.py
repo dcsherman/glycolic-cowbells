@@ -1,8 +1,11 @@
-#--------------------------------------------------
-# Desc:    reddit searcher with no oauth. Just for searching /u/LastOfTheIcarii
-# Author:  D. C. Sherman
-# Version: Python 2.7
-#--------------------------------------------------
+'''
+--------------------------------------------------
+    Desc:    reddit searcher with no oauth. Just for 
+             searching /u/LastOfTheIcarii
+    Author:  D. C. Sherman
+    Version: Python 2.7
+--------------------------------------------------
+'''
 
 import requests
 import json
@@ -66,7 +69,7 @@ def main():
     reddit = Reddit()
 
     # Can search from {"title", "author", "subreddit", "url", "domain" "permalink"}
-    search = {"title": "donald|sanders|hilary", "subreddit": "donald|sanders"}  # only strings
+    search = {"title": "viola|bassett|pinkett", "subreddit": "viola|bassett"}  # only strings
 
     # Pages to search through
     pages = 5
